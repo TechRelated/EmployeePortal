@@ -1,0 +1,22 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+
+        <form method="post">
+            <button type="submit" asp-page-handler="Login" >
+                Sign In
+            </button>
+            <button type="submit" asp-page-handler="Logout">
+                Sign Out
+            </button>
+            @*<button type="submit" asp-page-handler="ShowData">
+                Show Data
+            </button>*@
+            <h2>@Html.Raw(@ViewBag.Message)</h2>
+        </form>
+    </div>
