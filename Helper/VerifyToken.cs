@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace EmployeePortal.Helper
 {
-    public class VerifyToken
+    public static class VerifyToken
     {
-        public async Task<JwtSecurityToken> ValidateToken_new(string authorizationHeader)
+        public static async Task<JwtSecurityToken> ValidateToken_new(string authorizationHeader)
         {
             var issuer = "http://localhost:64558/";  //api
             var audience = "http://localhost:64466/"; //Web App
@@ -46,7 +46,7 @@ namespace EmployeePortal.Helper
             }
         }
 
-        public bool ValidateCurrentToken(string authorizationHeader)
+        public static bool ValidateCurrentToken(string authorizationHeader)
         {
             var mySecret = "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING";
             var signingKeys = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));

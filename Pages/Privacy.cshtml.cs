@@ -37,13 +37,12 @@ namespace EmployeePortal.Pages
                 return RedirectToPage("Index");
 
             string authorizationHeader = Request.Headers["Authorization"];
-            var verifytoken = new VerifyToken();
-
-            var validatedToken = await verifytoken.ValidateToken_new(authorizationHeader);
+            var validatedToken = await VerifyToken.ValidateToken_new(authorizationHeader);
 
             if (validatedToken.ValidTo < DateTime.UtcNow)
             {
                 Console.WriteLine("Invalid token");
+                HttpContext.Session.Remove("JWToken");
                 return RedirectToPage("Index");
             }
             return Page(); 
