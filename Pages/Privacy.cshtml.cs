@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using EmployeePortal.Helper;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -24,20 +18,36 @@ namespace EmployeePortal.Pages
             _logger = logger;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
+            /* if (!Request.Headers.ContainsKey("Authorization"))
+                   return RedirectToPage("Index");
+
+             string authorizationHeader = Request.Headers["Authorization"];
+             var verifytoken = new VerifyToken();
+             var currenttoken = verifytoken.ValidateCurrentToken(authorizationHeader);
+
+             if (!currenttoken)
+             {
+                 return RedirectToPage("Index");
+             } 
+              return Page();*/
+
             if (!Request.Headers.ContainsKey("Authorization"))
-                  return RedirectToPage("Index");
+                return RedirectToPage("Index");
 
             string authorizationHeader = Request.Headers["Authorization"];
             var verifytoken = new VerifyToken();
-            var currenttoken = verifytoken.ValidateCurrentToken(authorizationHeader);
 
-            if (!currenttoken)
+            var validatedToken = await verifytoken.ValidateToken_new(authorizationHeader);
+
+            if (validatedToken.ValidTo < DateTime.UtcNow)
             {
+                Console.WriteLine("Invalid token");
                 return RedirectToPage("Index");
-            } 
-             return Page();
+            }
+            return Page(); 
         }
+
     }
 }
