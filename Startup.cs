@@ -1,15 +1,18 @@
 using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using EmployeePortalV1.Models;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace EmployeePortal
 {
@@ -29,6 +32,10 @@ namespace EmployeePortal
         {
             services.AddMemoryCache();
 
+            services.Configure<SecurityStampValidatorOptions>(options => {
+                options.ValidationInterval = TimeSpan.Zero;
+            });
+
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.
@@ -36,7 +43,37 @@ namespace EmployeePortal
                 options.Cookie.HttpOnly = true;
                 options.Cookie.Name = ".empportal.Session";
             });
-            services.AddRazorPages();
+
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            /* Use this if wish to use cookie authentication*/
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(cookieOptions => {
+            //    cookieOptions.LoginPath = "/";
+            //    cookieOptions.ReturnUrlParameter = "returnUrl";
+            //});
+            /* Use this if wish to use cookie authentication*/
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddCookie("Bearer");
+            //services.AddMvc(option => option.EnableEndpointRouting = false)
+            //.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            //.AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+            services.AddRazorPages(options =>
+            {
+               // options.Conventions.AuthorizeFolder("/"); --->this causes reference looping
+                options.Conventions.AllowAnonymousToPage("/login");
+            });
+
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -52,11 +89,10 @@ namespace EmployeePortal
 
             app.UseStaticFiles();
 
-            app.UseSession();
-                      
-            app.UseRouting();
+            app.UseSession();         
 
-            app.UseAuthentication();
+            app.UseRouting();
+            app.UseAuthorization();
 
             //////Add JWToken to all incoming HTTP Request Header 
             app.Use(async (context, next) =>
@@ -69,9 +105,8 @@ namespace EmployeePortal
                 await next();
             });
             //Add JWToken Authentication service 
-
-            app.UseAuthorization();
-
+              
+            app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

@@ -7,16 +7,28 @@
     <div class="text-center">
         <h1 class="display-4">Welcome</h1>
 
+        <p>Login using form below:</p>
         <form method="post">
-            <button type="submit" asp-page-handler="Login" >
+            <div asp-validation-summary="All" class="text-danger"></div>
+            Username: <input asp-for="loginData.Username" value="" /><br />
+            Password: <input asp-for="loginData.Password" value="" type="password" /><br />
+            @*Remember me: <input asp-for="loginData.RememberMe" type="checkbox" /><br />*@
+            <button type="submit" asp-page-handler="Login">
+                Sign In
+            </button>
+            @Html.AntiForgeryToken()
+        </form>
+
+       @*@ <form method="post">
+            <button type="submit" asp-page-handler="Login">
                 Sign In
             </button>
             <button type="submit" asp-page-handler="Logout">
                 Sign Out
             </button>
-            @*<button type="submit" asp-page-handler="ShowData">
+            <button type="submit" asp-page-handler="ShowData">
                 Show Data
-            </button>*@
+            </button>
             <h2>@Html.Raw(@ViewBag.Message)</h2>
-        </form>
+        </form>*@
     </div>
