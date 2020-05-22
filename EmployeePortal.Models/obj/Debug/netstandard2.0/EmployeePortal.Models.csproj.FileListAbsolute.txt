@@ -1,0 +1,8 @@
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\obj\Debug\netstandard2.0\EmployeePortal.Models.AssemblyInfoInputs.cache
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\obj\Debug\netstandard2.0\EmployeePortal.Models.AssemblyInfo.cs
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\bin\Debug\netstandard2.0\EmployeePortal.Models.deps.json
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\bin\Debug\netstandard2.0\EmployeePortal.Models.dll
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\bin\Debug\netstandard2.0\EmployeePortal.Models.pdb
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\obj\Debug\netstandard2.0\EmployeePortal.Models.dll
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\obj\Debug\netstandard2.0\EmployeePortal.Models.pdb
+C:\ReactJS\Repository\EmployeePortalV1\EmployeePortal.Models\obj\Debug\netstandard2.0\EmployeePortal.Models.csprojAssemblyReference.cache
