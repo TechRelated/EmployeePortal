@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using EmployeePortalV1.Entities;
+﻿using EmployeePortalV1.Entities;
 using EmployeePortalV1.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,16 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace EmployeePortal.Pages
+namespace EmployeePortal.Pages.Logins
 {
-    public class IndexModel : PageModel
+    public class LoginModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly ILogger<LoginModel> _logger;
         [BindProperty] // Bind on Post
         public User loginData { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public LoginModel(ILogger<LoginModel> logger)
         {
             _logger = logger;
         }
@@ -37,44 +36,22 @@ namespace EmployeePortal.Pages
 
         public async Task<IActionResult> OnPostLoginAsync()
         {
-            //if (ModelState.IsValid)
-            //{
-                //var isValid = (loginData.Username == "test" && loginData.Password == "test"); // TODO Validate the username and the password with your own logic
-
-                //if (!isValid)
-                //{
-                //    ModelState.AddModelError("", "username or password is invalid");
-                //    return Page();
-                //}
-                //// Create the identity from the user info
-                //var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-                //identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, loginData.Username));
-                //identity.AddClaim(new Claim(ClaimTypes.Name, loginData.Username));
-                //// Authenticate using the identity
-                //var principal = new ClaimsPrincipal(identity);
-
-                //await HttpContext.SignInAsync(JwtBearerDefaults.AuthenticationScheme, principal);
-
-                try
-                {
-                    AuthenticateModel userModel = new AuthenticateModel();
-                    userModel.Username = loginData.Username;//"test";
-                    userModel.Password = loginData.Password;
+            try
+            {
+                AuthenticateModel userModel = new AuthenticateModel();
+                userModel.Username = loginData.Username;//"test";
+                userModel.Password = loginData.Password;
 
                 if (!ModelState.IsValid)
                 {
                     return Page();
                 }
 
-                // Verification.  
-                //if (ModelState.IsValid)
-                //{
                 User ValidUser = await Login(userModel);
 
-                    // Verification. 
-                    if (ValidUser != null)
-                    {
-
+                // Verification. 
+                if (ValidUser != null)
+                {
                     //Save token in session object
                     HttpContext.Session.SetString("JWToken", ValidUser.Token.ToString());
                     // Create the identity from the user info
@@ -104,29 +81,20 @@ namespace EmployeePortal.Pages
                     //        ExpiresUtc = DateTime.UtcNow.AddSeconds(20)
                     //    });
                     /* Use this if wish to use cookie authentication*/
-                    return RedirectToPage("loginsuccess");
-                    }
-                    else
-                    {
-                        // Setting.  
-                        ModelState.AddModelError(string.Empty, "Invalid username or password.");
-                    }
-                    //}
+                    return RedirectToPage("/Logins/loginsuccess");
                 }
-                catch (Exception ex)
+                else
                 {
-                    // Info  
-                    Console.Write(ex);
+                    // Setting.  
+                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 }
+            }
+            catch (Exception ex)
+            {
+                // Info  
+                Console.Write(ex);
+            }
             return Page();
-
-            //}
-            //else
-            //{
-            //    ModelState.AddModelError("", "username or password is blank");
-            //    return Page();
-            //}
-
         }
 
         public async Task<User> Login(AuthenticateModel user)
@@ -146,7 +114,7 @@ namespace EmployeePortal.Pages
             {
                 HttpContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
 
-                using (var response = await httpClient.PostAsync(baseUrl+ "/Users/authenticate", content))
+                using (var response = await httpClient.PostAsync(baseUrl + "/Users/authenticate", content))
                 {
 
                     if (!response.IsSuccessStatusCode)
@@ -180,34 +148,8 @@ namespace EmployeePortal.Pages
         {
             HttpContext.Session.Remove("JWToken");
 
-           // ViewBag.Message = "User logged out successfully!";
+            // ViewBag.Message = "User logged out successfully!";
             return RedirectToPage("Index");
         }
-        /*   public async Task<User> LoginUser(AuthenticateModel user)
-           {
-               User validuser = null;
-
-               using (var httpClient = new HttpClient())
-               {
-                   HttpContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-
-                   using (var response = await httpClient.PostAsync("http://localhost:64466/Users/authenticate", content))
-                   {
-
-                       if (!response.IsSuccessStatusCode)
-                       {
-                           throw new Exception("user not found");
-                       }
-
-                       if (response.StatusCode == HttpStatusCode.Unauthorized)
-                       {
-                           return null;
-                       }
-
-                       validuser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
-                   }
-               }
-               return await Task.Run(() => validuser);
-           }*/
-    }
+     }
 }

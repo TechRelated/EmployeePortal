@@ -67,6 +67,7 @@ namespace EmployeePortal
             {
                // options.Conventions.AuthorizeFolder("/"); --->this causes reference looping
                 options.Conventions.AllowAnonymousToPage("/login");
+                options.Conventions.AddPageRoute("/Logins/login", "");
             });
 
             services.AddControllers().AddNewtonsoftJson(options =>

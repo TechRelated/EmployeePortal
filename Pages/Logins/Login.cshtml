@@ -1,0 +1,52 @@
+﻿@page
+@model EmployeePortal.Pages.Logins.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<body>
+    <div style="padding-top:50px;"></div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="row">
+                You are Logged in as
+                <span style="font-size:large;color:forestgreen;">
+                    @User.Identity.Name
+                </span>
+            </div>
+            <div class="row" style="padding-top:50px;">
+                @Html.ActionLink("Log Off", "Logoff",
+                "/Logins/Logins", null, new { @class = "btn btn-primary btn-lg rph-login-button" })
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                    <div>
+                        <p>Login using form below:</p>
+                        <div class="text-center">
+                            <h1 class="display-4">Welcome</h1>
+
+                            <p>Login using form below:</p>
+                            <form method="post">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                Username: <input asp-for="loginData.Username" value="" /><br />
+                                Password: <input asp-for="loginData.Password" value="" type="password" /><br />
+                                @*Remember me: <input asp-for="loginData.RememberMe" type="checkbox" /><br />*@
+                                <button type="submit" asp-page-handler="Login">
+                                    Sign In
+                                </button>
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </body>
+</html>
